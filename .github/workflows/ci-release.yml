@@ -1,0 +1,73 @@
+name: CI Release
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron:  "0 0 * * 1-5"
+
+jobs:
+  fedora:
+    name: Linux Fedora (Release, GCC, cxx11)
+    runs-on: ubuntu-latest
+    container: dynawo/dynawo-distribution-cxx11:latest
+    strategy:
+      fail-fast: false
+    env:
+      DYNAWO_INSTALL_OPENMODELICA: /opt/OpenModelica/Install
+      DYNAWO_SRC_OPENMODELICA: /opt/OpenModelica/Source
+      DYNAWO_RESULTS_SHOW: "false"
+      DYNAWO_BUILD_TYPE: Release
+      DYNAWO_CXX11_ENABLED: YES
+      DYNAWO_NB_PROCESSORS_USED: 2
+      DYNAWO_FORCE_CXX11_ABI: "true"
+      COMPILER_FOLDER: 'gcc5.3.1'
+      ZIP_NAME: "dynawo-algorithms-cxx11-nightly.zip"
+      ZIP_DYNAWO: "dynawo-cxx11-nightly.zip"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Fetch Dynawo
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          repo: "dynawo/dynawo"
+          version: "tags/nightly"
+          file: "${{ env.ZIP_DYNAWO }}"
+          target: "dynawo/dynawo.zip"
+          token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Extract Dynawo
+        run: |
+          cd dynawo
+          unzip -qq "dynawo.zip"
+          cd ..
+
+      - name: Build
+        run: |
+          export DYNAWO_HOME=$(pwd)/dynawo
+          export DYNAWO_ALGORITHMS_HOME=$(pwd)
+          util/envDynawoAlgorithms.sh build
+
+      - name: Prepare files
+        run: |
+          export DYNAWO_HOME=$(pwd)/dynawo
+          export DYNAWO_ALGORITHMS_HOME=$(pwd)
+          util/envDynawoAlgorithms.sh deploy
+
+      - name: Archive Release
+        run: |
+          cd "deploy/${{ env.COMPILER_FOLDER }}/"
+          zip -r "${{ env.ZIP_NAME }}" ./*
+
+      - name: Release
+        uses: ncipollo/release-action@v1
+        with:
+          name: "Nightly"
+          body: "Dynwo algorithms's nightly release. Compiled on *release* settings.\n\n **Don't use it for production**"
+          commit: "master"
+          tag: "nightly"
+          artifacts: "deploy/${{ env.COMPILER_FOLDER }}/${{ env.ZIP_NAME }}"
+          allowUpdates: true
+          artifactErrorsFailBuild: true
+          token: ${{ secrets.GITHUB_TOKEN }}
