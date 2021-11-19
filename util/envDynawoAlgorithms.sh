@@ -66,6 +66,7 @@ where [option] can be:
 
 SCRIPT=$(cd "$(dirname "${BASH_SOURCE[0]}")" && echo "$(pwd)"/"$(basename ${BASH_SOURCE[0]})")
 TOTAL_CPU=$(grep -c ^processor /proc/cpuinfo)
+NBPROCS=1
 
 export_var_env_force() {
   local var=$@
@@ -663,13 +664,13 @@ launch_CS() {
 }
 
 launch_SA() {
-  $DYNAWO_ALGORITHMS_INSTALL_DIR/bin/dynawoAlgorithms --simulationType SA $@
+  mpirun -np $NBPROCS $DYNAWO_ALGORITHMS_INSTALL_DIR/bin/dynawoAlgorithms --simulationType SA $@
   RETURN_CODE=$?
   return ${RETURN_CODE}
 }
 
 launch_MC() {
-  $DYNAWO_ALGORITHMS_INSTALL_DIR/bin/dynawoAlgorithms --simulationType MC $@
+  mpirun -np $NBPROCS $DYNAWO_ALGORITHMS_INSTALL_DIR/bin/dynawoAlgorithms --simulationType MC $@
   RETURN_CODE=$?
   return ${RETURN_CODE}
 }
@@ -681,13 +682,13 @@ launch_CS_gdb() {
 }
 
 launch_SA_gdb() {
-  gdb -q --args $DYNAWO_ALGORITHMS_INSTALL_DIR/bin/dynawoAlgorithms --simulationType SA $@
+  mpirun -np $NBPROCS xterm -e gdb -q --args $DYNAWO_ALGORITHMS_INSTALL_DIR/bin/dynawoAlgorithms --simulationType SA $@
   RETURN_CODE=$?
   return ${RETURN_CODE}
 }
 
 launch_MC_gdb() {
-  gdb -q --args $DYNAWO_ALGORITHMS_INSTALL_DIR/bin/dynawoAlgorithms --simulationType MC $@
+  mpirun -np $NBPROCS xterm -e gdb -q --args $DYNAWO_ALGORITHMS_INSTALL_DIR/bin/dynawoAlgorithms --simulationType MC $@
   RETURN_CODE=$?
   return ${RETURN_CODE}
 }
@@ -701,13 +702,28 @@ elif [ -n "$ZSH_VERSION" ]; then
 fi
 
 ## force build_type for specific cases
-LAUNCH_COMMAND=$*
 MODE=$1
+ARGS=""
+while [[ $# -gt 0 ]]
+do
+  key="$1"
+  case $key in
+    --nbThreads|-np)
+    NBPROCS=$2
+    shift # past argument
+    shift # past value
+    ;;
+  *)
+    ARGS="$ARGS $key"
+    shift # past argument
+    ;;
+  esac
+done
 
 ## set environnement variables
 set_environnement $MODE
 
-ARGS=`echo ${LAUNCH_COMMAND} | cut -d' ' -f2-`
+ARGS=`echo ${ARGS} | cut -d' ' -f2-`
 ## launch command
 case $MODE in
   config)

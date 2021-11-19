@@ -101,7 +101,7 @@ algo_CS() {
   # launch dynawo-algorithms
   $DYNAWO_ALGORITHMS_INSTALL_DIR/bin/dynawoAlgorithms --simulationType=CS $@
   RETURN_CODE=$?
-  
+
   while (($#)); do
   case $1 in
     --input)
@@ -118,33 +118,47 @@ algo_CS() {
       ;;
     esac
   done
-  
+
   return ${RETURN_CODE}
 }
 
 algo_MC() {
   setEnv
 
-  # launch margin calculation
-  $DYNAWO_ALGORITHMS_INSTALL_DIR/bin/dynawoAlgorithms --simulationType=MC $@
-  RETURN_CODE=$?
-
+  args=""
+  NBPROCS=1
+  FILTER_TIMELINE=false
   while (($#)); do
   case $1 in
     --directory)
       if [ ! -z "$2" ]; then
   	    if [ -d "$2" ]; then
-          filter_timeline $2
+          FILTER_TIMELINE=true
+          timeline=$2
         fi
       fi
-      break
+      args="$args --directory"
+      shift
+      ;;
+    --nbThreads|-np)
+      NBPROCS=$2
+      shift # past argument
+      shift # past value
       ;;
     *)
+      args="$args $1"
       shift
-      break
       ;;
     esac
   done
+
+  # launch margin calculation
+  mpirun -np $NBPROCS $DYNAWO_ALGORITHMS_INSTALL_DIR/bin/dynawoAlgorithms --simulationType=MC $args
+  RETURN_CODE=$?
+
+  if [ "$FILTER_TIMELINE" = true ]; then
+    filter_timeline $timeline
+  fi
 
   return ${RETURN_CODE}
 }
@@ -152,26 +166,40 @@ algo_MC() {
 algo_SA() {
   setEnv
 
-  # launch dynamic systematic analysis
-  $DYNAWO_ALGORITHMS_INSTALL_DIR/bin/dynawoAlgorithms --simulationType=SA $@
-  RETURN_CODE=$?
-
+  NBPROCS=1
+  args=""
+  FILTER_TIMELINE=false
   while (($#)); do
   case $1 in
     --directory)
       if [ ! -z "$2" ]; then
   	    if [ -d "$2" ]; then
-          filter_timeline $2
+          FILTER_TIMELINE=true
+          timeline=$2
         fi
       fi
-      break
+      args="$args --directory"
+      shift
+      ;;
+    --nbThreads|-np)
+      NBPROCS=$2
+      shift # past argument
+      shift # past value
       ;;
     *)
+      args="$args $1"
       shift
-      break
       ;;
     esac
   done
+
+  # launch dynamic systematic analysis
+  mpirun -np $NBPROCS $DYNAWO_ALGORITHMS_INSTALL_DIR/bin/dynawoAlgorithms --simulationType=SA $args
+  RETURN_CODE=$?
+
+  if [ "$FILTER_TIMELINE" = true ]; then
+    filter_timeline $timeline
+  fi
 
   return ${RETURN_CODE}
 }
