@@ -103,7 +103,6 @@ MarginCalculationLauncher::launch() {
   for (size_t i=0, iEnd = events.size(); i < iEnd ; i++)
     allEvents.push_back(i);
   toRun.push(task_t(100, 100, allEvents));
-  toRun.push(task_t(0, 0, allEvents));
 
   results_.push_back(LoadIncreaseResult());
   size_t idx = results_.size() - 1;
@@ -118,6 +117,7 @@ MarginCalculationLauncher::launch() {
   results_[idx].setStatus(result100.getStatus());
   std::vector<double > maximumVariationPassing(events.size(), 0.);
   if (result100.getSuccess()) {
+    findAllLevelsBetween(0., 100., marginCalculation->getAccuracy(), allEvents, toRun);
     findOrLaunchScenarios(baseJobsFile, events, toRun, results_[idx]);
 
     // analyze results
@@ -141,7 +141,6 @@ MarginCalculationLauncher::launch() {
   Trace::info(logTag_) << Trace::endline;
 
   toRun = std::queue< task_t >();
-  toRun.push(task_t(0, 0, allEvents));
 
   results_.push_back(LoadIncreaseResult());
   idx = results_.size() - 1;
@@ -153,6 +152,20 @@ MarginCalculationLauncher::launch() {
   findOrLaunchLoadIncrease(loadIncrease, 0, marginCalculation->getAccuracy(), result0);
   results_[idx].setStatus(result0.getStatus());
   if (result0.getSuccess()) {
+    toRun = std::queue< task_t >();
+    std::vector<size_t> eventsIds;
+    for (size_t i = 0, iEnd = events.size(); i < iEnd ; i++) {
+      if (0. > maximumVariationPassing[i] || DYN::doubleEquals(0., maximumVariationPassing[i])) {
+        eventsIds.push_back(i);
+      } else {
+        Trace::info(logTag_) << DYNAlgorithmsLog(ScenarioNotSimulated, events[i]->getId()) << Trace::endline;
+        results_[idx].getResult(i).setScenarioId(events[i]->getId());
+        results_[idx].getResult(i).setVariation(0.);
+        results_[idx].getResult(i).setSuccess(true);
+        results_[idx].getResult(i).setStatus(CONVERGENCE_STATUS);
+      }
+    }
+    toRun.push(task_t(0., 0., eventsIds));
     findOrLaunchScenarios(baseJobsFile, events, toRun, results_[idx]);
   } else {
     Trace::info(logTag_) << "============================================================ " << Trace::endline;
