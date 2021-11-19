@@ -34,6 +34,7 @@ set(LIBDIR_NAME lib)
 set(DOCDIR_NAME doxygen)
 
 get_filename_component(DYNAWO_HOME ${DYNAWO_HOME} ABSOLUTE)
+get_filename_component(DYNAWO_ALGORITHMS_THIRD_PARTY_DIR ${DYNAWO_ALGORITHMS_THIRD_PARTY_DIR} ABSOLUTE)
 
 # If C++11 is enabled, check flags availability
 set(CXX11_ENABLED ${CXX11_ENABLED} CACHE BOOL "")
@@ -232,6 +233,7 @@ find_package(Dynawo 1.3.0 REQUIRED)
 find_package(XercesC REQUIRED)
 # end of hack
 
+set(MPI_HOME ${DYNAWO_ALGORITHMS_THIRD_PARTY_DIR}/mpich)
 find_package(MPI REQUIRED)
 if(MPI_FOUND)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${MPI_C_FLAGS}")
