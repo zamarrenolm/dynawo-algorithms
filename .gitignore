@@ -17,6 +17,8 @@ nrt/data/IEEE14/SA*/IEEE14*
 nrt/data/IEEE14/SA*/*.dyd
 nrt/data/IEEE14/SA*/*.par
 nrt/data/IEEE14/SA*/*.xml
+nrt/data/IEEE14/SA*/*/result.save.txt
+nrt/data/IEEE14/MC*/*/result.save.txt
 nrt/data/IEEE14/SA*/constraints
 nrt/data/IEEE14/SA*/timeLine
 nrt/data/IEEE14/SA*/timeline

@@ -223,6 +223,37 @@ class MarginCalculationLauncher : public RobustnessAnalysisLauncher {
    */
   void readTimes(const std::string& jobFileLoadIncrease, const std::string& jobFileScenario);
 
+  /**
+   * @brief Generate variations list to launch
+   *
+   * Use load increase status to generate it
+   *
+   * @param maxNumber max number of variations of the computed vector
+   * @param variation the base variation
+   * @param tolerance the tolerance for variation
+   * @return the list of variations to launch in parallel
+   */
+  std::vector<double> generateVariationsToLaunch(unsigned int maxNumber, double variation, double tolerance) const;
+
+  /**
+   * @brief Synchronize successes between all processus
+   *
+   * This function will gather all sucesses into the root processus and broadcast it to all processus after
+   * in order the algorithms for load increase / scenario attributions to have the result in all processus
+   *
+   * @param successes the list of successes for current processus
+   * @return The list of successes for all procs
+   */
+  std::vector<bool> synchronizeSuccesses(const std::vector<bool>& successes);
+
+  /**
+   * @brief Computes the load increase id used in the simulation and set into the simulation result
+   *
+   * @param variation the variation of the scenario
+   * @return the scenario id to use
+   */
+  static std::string computeLoadIncreaseScenarioId(double variation);
+
  private:
   /**
    * @brief double comparison with tolerance
@@ -239,9 +270,31 @@ class MarginCalculationLauncher : public RobustnessAnalysisLauncher {
     }
   };
 
+  /**
+   * @brief Load increase status result
+   *
+   * This structure will be used in MPI communications
+   *
+   */
+  struct LoadIncreaseStatus {
+    /// @brief default Constructor
+    LoadIncreaseStatus(): success(false) {}
+    /**
+     * @brief Construct a new Load Increase Status
+     *
+     * @param success true if the simulation succeeds, false if not
+     */
+    explicit LoadIncreaseStatus(bool success) : success(success) {}
+
+    bool success;  ///< true if the simulation succeeds, false if not
+  };
+  /// @brief Scenario status, corresponding to all scenario status for a given load increase
+  using ScenarioStatus = std::vector<LoadIncreaseStatus>;
+  std::map<double, LoadIncreaseStatus> loadIncreaseStatus_;  ///< Map of load increase status by variation
+  std::map<double, ScenarioStatus, dynawoDoubleLess> scenarioStatus_;  ///< Map of scenario status by variation
+
+
   std::vector<LoadIncreaseResult> results_;  ///< results of the systematic analysis
-  std::map<double, SimulationResult, dynawoDoubleLess> loadIncreaseCache_;  ///< contains available load increase simulation results
-  std::map<double, LoadIncreaseResult, dynawoDoubleLess> scenariosCache_;  ///< contains available scenarios simulation results
   std::map<std::string, MultiVariantInputs> inputsByIIDM_;  ///< For scenarios, the contexts to use, by IIDM file
   double tLoadIncrease_;  ///< maximum stop time for the load increase part
   double tScenario_;  ///< stop time for the scenario part
