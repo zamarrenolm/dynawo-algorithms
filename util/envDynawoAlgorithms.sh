@@ -704,8 +704,7 @@ fi
 ## force build_type for specific cases
 MODE=$1
 ARGS=""
-while [[ $# -gt 0 ]]
-do
+while (($#)); do
   key="$1"
   case $key in
     --nbThreads|-np)
