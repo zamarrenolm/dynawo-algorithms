@@ -1,5 +1,6 @@
 build
 build-code
+3rdParty/mpich/mpich-*.tar.gz
 install
 distributions/*
 nbproject/*
