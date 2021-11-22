@@ -300,7 +300,7 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dynawoalgorithms-config-version.cmake
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sources/config_algorithms.h.in ${CMAKE_CURRENT_SOURCE_DIR}/sources/config_algorithms.h @ONLY)
 
-include(cpplint/cpplint.cmake)
+#include(cpplint/cpplint.cmake)
 
 add_subdirectory(sources)
 add_subdirectory(doxygen)

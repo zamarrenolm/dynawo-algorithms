@@ -24,9 +24,9 @@
 namespace DYNAlgorithms {
 
 SimulationResult::SimulationResult():
-    variation_(-1.),
-    success_(false),
-    status_(EXECUTION_PROBLEM_STATUS) {
+  variation_(-1.),
+  success_(false),
+  status_(NOT_TREATED) {
 }
 
 SimulationResult::~SimulationResult() {

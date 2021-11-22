@@ -21,14 +21,17 @@ namespace DYNAlgorithms {
  * @brief task status
  */
 typedef enum {
+  NOT_TREATED,  ///< simulation has not been launched or processed
   CONVERGENCE_STATUS,  ///< simulation reached its end with no error nor criterion not respected
   DIVERGENCE_STATUS,  ///< divergence occurs during the simulation (solver error)
   EXECUTION_PROBLEM_STATUS,  ///< something wrong happened during the simulation (solver error, data error, etc...)
   CRITERIA_NON_RESPECTED_STATUS  ///< one criterion was not respected (0.8 Un, etc...)
-}status_t;
+} status_t;
 
 static inline std::string getStatusAsString(status_t status) {
   switch (status) {
+    case NOT_TREATED:
+      return "NOT_TREATED";
     case CONVERGENCE_STATUS:
       return "CONVERGENCE";
     case EXECUTION_PROBLEM_STATUS:

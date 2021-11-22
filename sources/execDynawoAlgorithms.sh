@@ -160,7 +160,7 @@ algo_MC() {
   done
 
   # launch margin calculation
-  "MPIRUN_PATH" -np $NBPROCS $DYNAWO_ALGORITHMS_INSTALL_DIR/bin/dynawoAlgorithms --simulationType=MC $args
+  "$MPIRUN_PATH" -np $NBPROCS $DYNAWO_ALGORITHMS_INSTALL_DIR/bin/dynawoAlgorithms --simulationType=MC $args
   RETURN_CODE=$?
 
   if [ "$FILTER_TIMELINE" = true ]; then
@@ -201,7 +201,7 @@ algo_SA() {
   done
 
   # launch dynamic systematic analysis
-  "MPIRUN_PATH" -np $NBPROCS $DYNAWO_ALGORITHMS_INSTALL_DIR/bin/dynawoAlgorithms --simulationType=SA $args
+  "$MPIRUN_PATH" -np $NBPROCS $DYNAWO_ALGORITHMS_INSTALL_DIR/bin/dynawoAlgorithms --simulationType=SA $args
   RETURN_CODE=$?
 
   if [ "$FILTER_TIMELINE" = true ]; then
