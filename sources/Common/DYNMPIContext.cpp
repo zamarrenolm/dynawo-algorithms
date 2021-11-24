@@ -13,6 +13,7 @@
 
 #include "DYNMPIContext.h"
 
+#include <iostream>
 #include <numeric>
 
 namespace DYNAlgorithms {
@@ -25,9 +26,21 @@ Context::instance() {
 }
 
 Context::Context() {
-  MPI_Init(NULL, NULL);
-  MPI_Comm_size(MPI_COMM_WORLD, &nbProcs_);
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank_);
+  int ret = MPI_Init(NULL, NULL);
+  if (ret != MPI_SUCCESS) {
+    std::cerr << "Error initialization MPI" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  ret = MPI_Comm_size(MPI_COMM_WORLD, &nbProcs_);
+  if (ret != MPI_SUCCESS) {
+    std::cerr << "Error acquiring number of MPI processus" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  ret = MPI_Comm_rank(MPI_COMM_WORLD, &rank_);
+  if (ret != MPI_SUCCESS) {
+    std::cerr << "Error initialization MPI" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
 }
 
 Context::~Context() {
