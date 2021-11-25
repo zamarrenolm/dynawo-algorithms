@@ -40,6 +40,8 @@ export_var_env() {
   export $name="$value"
 }
 
+MPIRUN_PATH=$(which mpirun)
+
 usage="Usage: `basename $0` [option] -- program to launch Dynawo simulation
 
 where [option] can be:
@@ -53,6 +55,7 @@ where [option] can be:
 setEnv() {
   export_var_env DYNAWO_ALGORITHMS_INSTALL_DIR=$(dirname $(dirname $(readlink -f $0)))
   export_var_env DYNAWO_INSTALL_DIR=$DYNAWO_ALGORITHMS_INSTALL_DIR
+  export_var_env DYNAWO_ALGORITHMS_THIRD_PARTY_INSTALL_DIR=$DYNAWO_ALGORITHMS_INSTALL_DIR
 
   export_var_env DYNAWO_ADEPT_INSTALL_DIR=$DYNAWO_ALGORITHMS_INSTALL_DIR
   export_var_env DYNAWO_SUNDIALS_INSTALL_DIR=$DYNAWO_ALGORITHMS_INSTALL_DIR
@@ -75,6 +78,10 @@ setEnv() {
 
   # set LD_LIBRARY_PATH
   export LD_LIBRARY_PATH=$DYNAWO_ALGORITHMS_INSTALL_DIR/lib:$LD_LIBRARY_PATH
+
+  if [ -z "$MPIRUN_PATH" ]; then
+    MPIRUN_PATH="$DYNAWO_ALGORITHMS_THIRD_PARTY_INSTALL_DIR/mpich/bin/mpirun"
+  fi
 }
 
 find_and_call_timeline() {
@@ -153,7 +160,7 @@ algo_MC() {
   done
 
   # launch margin calculation
-  mpirun -np $NBPROCS $DYNAWO_ALGORITHMS_INSTALL_DIR/bin/dynawoAlgorithms --simulationType=MC $args
+  "MPIRUN_PATH" -np $NBPROCS $DYNAWO_ALGORITHMS_INSTALL_DIR/bin/dynawoAlgorithms --simulationType=MC $args
   RETURN_CODE=$?
 
   if [ "$FILTER_TIMELINE" = true ]; then
@@ -194,7 +201,7 @@ algo_SA() {
   done
 
   # launch dynamic systematic analysis
-  mpirun -np $NBPROCS $DYNAWO_ALGORITHMS_INSTALL_DIR/bin/dynawoAlgorithms --simulationType=SA $args
+  "MPIRUN_PATH" -np $NBPROCS $DYNAWO_ALGORITHMS_INSTALL_DIR/bin/dynawoAlgorithms --simulationType=SA $args
   RETURN_CODE=$?
 
   if [ "$FILTER_TIMELINE" = true ]; then
