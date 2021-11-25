@@ -27,7 +27,10 @@
 #include <DYNCommon.h>
 #include "DYNRobustnessAnalysisLauncher.h"
 #include "DYNLoadIncreaseResult.h"
+#include "DYNMarginSimulation.h"
 #include <map>
+#include <memory>
+#include <unordered_map>
 
 namespace DYNAlgorithms {
 class LoadIncrease;
@@ -106,6 +109,9 @@ class MarginCalculationLauncher : public RobustnessAnalysisLauncher {
   double computeGlobalMargin(const boost::shared_ptr<LoadIncrease>& loadIncrease,
       const std::string& baseJobsFile, const std::vector<boost::shared_ptr<Scenario> >& events,
       std::vector<double >& maximumVariationPassing, double tolerance);
+
+  unsigned int computeGlobalMargin();
+
   /**
    * @brief Research of the maximum variation value for all the scenarios
    * try to find the maximum load increase between 0 and 100% for each scenario.
@@ -148,6 +154,8 @@ class MarginCalculationLauncher : public RobustnessAnalysisLauncher {
    */
   void launchLoadIncrease(const boost::shared_ptr<LoadIncrease>& loadIncrease, const double variation, SimulationResult& result);
 
+  void launchLoadIncreases(const boost::shared_ptr<LoadIncrease>& loadIncrease, const std::vector<unsigned int>& variations);
+
   /**
    * @brief Find if the scenarios associated to this variation were already done
    * otherwise, launch as many load scenarios as possible in multi-threading, including the variation one
@@ -175,6 +183,18 @@ class MarginCalculationLauncher : public RobustnessAnalysisLauncher {
   void prepareEvents2Run(const task_t& requestedTask,
       std::queue< task_t >& toRun,
       std::vector<std::pair<size_t, double> >& events2Run);
+
+  struct ScenarioSimulation {
+    ScenarioSimulation(unsigned int variation, unsigned int scenarioIdx): variation(variation), scenarioIdx(scenarioIdx) {}
+
+    unsigned int variation;
+    unsigned int scenarioIdx;
+  };
+
+  void launchScenarios(const std::vector<ScenarioSimulation>& events, const boost::shared_ptr<Scenarios>& scenarios);
+
+  std::vector<ScenarioSimulation> computeScenarioSimulations(const std::vector<unsigned int>& variations,
+    const std::vector<boost::shared_ptr<Scenario>>& scenarios) const;
 
   /**
    * @brief launch the calculation of one scenario
@@ -254,6 +274,14 @@ class MarginCalculationLauncher : public RobustnessAnalysisLauncher {
    */
   static std::string computeLoadIncreaseScenarioId(double variation);
 
+  void updateResults(LoadIncreaseResult& result, unsigned int variation, const std::vector<boost::shared_ptr<DYNAlgorithms::Scenario>>& scenarios) const;
+
+  bool IsScenarioPassedWithBetterVariation(const std::string& scenarioId, unsigned int variation) const;
+
+  std::vector<unsigned int> performLoadIncreases(const std::vector<unsigned int>& variations);
+
+  std::vector<unsigned int> filterNOKVariations(const std::vector<unsigned int>& variations) const;
+
  private:
   /**
    * @brief double comparison with tolerance
@@ -289,7 +317,7 @@ class MarginCalculationLauncher : public RobustnessAnalysisLauncher {
     bool success;  ///< true if the simulation succeeds, false if not
   };
   /// @brief Scenario status, corresponding to all scenario status for a given load increase
-  using ScenarioStatus = std::vector<LoadIncreaseStatus>;
+  using ScenarioStatus = std::unordered_map<unsigned int, LoadIncreaseStatus>;
   std::map<double, LoadIncreaseStatus> loadIncreaseStatus_;  ///< Map of load increase status by variation
   std::map<double, ScenarioStatus, dynawoDoubleLess> scenarioStatus_;  ///< Map of scenario status by variation
 
@@ -298,6 +326,9 @@ class MarginCalculationLauncher : public RobustnessAnalysisLauncher {
   std::map<std::string, MultiVariantInputs> inputsByIIDM_;  ///< For scenarios, the contexts to use, by IIDM file
   double tLoadIncrease_;  ///< maximum stop time for the load increase part
   double tScenario_;  ///< stop time for the scenario part
+
+  std::shared_ptr<MarginSimulation> marginSimulation_;
+  std::unordered_map<MarginSimulation::ScenarioId, unsigned int> scenarioVariationPassed_;
 };
 }  // namespace DYNAlgorithms
 

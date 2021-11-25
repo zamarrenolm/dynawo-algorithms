@@ -111,7 +111,7 @@ RobustnessAnalysisLauncher::init(const bool doInitLog) {
     throw DYNAlgorithmsError(DirectoryDoesNotExist, workingDirectory_);
   workingDirectory_ += '/';  // to be sure to have an '/' at the end of the path
 
-  if (doInitLog)
+  if (doInitLog && mpi::context().isRootProc())
     initLog();
 
   // build the name of the outputFile

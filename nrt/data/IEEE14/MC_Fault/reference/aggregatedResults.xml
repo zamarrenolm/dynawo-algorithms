@@ -11,11 +11,32 @@
       <criterionNonRespected id="total load power = 296.905MW &gt; 200MW (criteria id: Risque protection)" time="100.000001"/>
     </scenarioResults>
   </loadIncreaseResults>
-  <loadIncreaseResults loadLevel="0" status="CONVERGENCE">
+  <loadIncreaseResults loadLevel="50" status="CONVERGENCE">
     <scenarioResults id="DisconnectLine" status="CONVERGENCE"/>
     <scenarioResults id="DisconnectGroup" status="CONVERGENCE"/>
     <scenarioResults id="Fault" status="CRITERIA_NON_RESPECTED">
-      <criterionNonRespected id="total load power = 258.995MW &gt; 200MW (criteria id: Risque protection)" time="110.057322"/>
+      <criterionNonRespected id="total load power = 345.328MW &gt; 200MW (criteria id: Risque protection)" time="109.999986"/>
+    </scenarioResults>
+  </loadIncreaseResults>
+  <loadIncreaseResults loadLevel="25" status="CONVERGENCE">
+    <scenarioResults id="DisconnectLine" status="CONVERGENCE"/>
+    <scenarioResults id="DisconnectGroup" status="CONVERGENCE"/>
+    <scenarioResults id="Fault" status="CRITERIA_NON_RESPECTED">
+      <criterionNonRespected id="total load power = 259.526MW &gt; 200MW (criteria id: Risque protection)" time="109.999980"/>
+    </scenarioResults>
+  </loadIncreaseResults>
+  <loadIncreaseResults loadLevel="10" status="CONVERGENCE">
+    <scenarioResults id="DisconnectLine" status="CONVERGENCE"/>
+    <scenarioResults id="DisconnectGroup" status="CONVERGENCE"/>
+    <scenarioResults id="Fault" status="CRITERIA_NON_RESPECTED">
+      <criterionNonRespected id="total load power = 203.549MW &gt; 200MW (criteria id: Risque protection)" time="109.999979"/>
+    </scenarioResults>
+  </loadIncreaseResults>
+  <loadIncreaseResults loadLevel="5" status="CONVERGENCE">
+    <scenarioResults id="DisconnectLine" status="CONVERGENCE"/>
+    <scenarioResults id="DisconnectGroup" status="CONVERGENCE"/>
+    <scenarioResults id="Fault" status="CRITERIA_NON_RESPECTED">
+      <criterionNonRespected id="total load power = 325.358MW &gt; 200MW (criteria id: Risque protection)" time="110.057322"/>
     </scenarioResults>
   </loadIncreaseResults>
 </aggregatedResults>
