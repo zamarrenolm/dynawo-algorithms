@@ -236,12 +236,12 @@ class MarginCalculationLauncher : public RobustnessAnalysisLauncher {
   std::vector<double> generateVariationsToLaunch(unsigned int maxNumber, double variation, double tolerance) const;
 
   /**
-   * @brief Synchronize successes between all processus
+   * @brief Synchronize successes between all process
    *
-   * This function will gather all sucesses into the root processus and broadcast it to all processus after
-   * in order the algorithms for load increase / scenario attributions to have the result in all processus
+   * This function will gather all successes into the root process and broadcast it to all process after
+   * in order the algorithms for load increase / scenario attributions to have the result in all process
    *
-   * @param successes the list of successes for current processus
+   * @param successes the list of successes for current process
    * @return The list of successes for all procs
    */
   std::vector<bool> synchronizeSuccesses(const std::vector<bool>& successes);
