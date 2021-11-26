@@ -41,7 +41,7 @@ class Context {
   /// @brief Destructor
   ~Context();
 
-  /// @brief Synchronize all processus
+  /// @brief Synchronize all process
   static void sync() {
     MPI_Barrier(MPI_COMM_WORLD);
   }
@@ -51,7 +51,7 @@ class Context {
    *
    * @tparam T The data type to gather
    * @param data the data to send to root rank
-   * @param recvData the vector of gathered data (relevant only for root processus)
+   * @param recvData the vector of gathered data (relevant only for root process)
    */
   template<class T>
   void gather(const T& data, std::vector<T>& recvData) const {
@@ -59,7 +59,7 @@ class Context {
   }
 
   /**
-   * @brief Broadcast data from root rank to all processus
+   * @brief Broadcast data from root rank to all process
    *
    * @tparam T the data type to broadcast
    * @param data the data to broadcast
@@ -70,16 +70,16 @@ class Context {
   }
 
   /**
-   * @brief Retrieve the number of MPI processus
+   * @brief Retrieve the number of MPI process
    *
-   * @return number of processus
+   * @return number of process
    */
   unsigned int nbProcs() const {
     return static_cast<unsigned int>(nbProcs_);
   }
 
   /**
-   * @brief Retrieve the rank of the current processus
+   * @brief Retrieve the rank of the current process
    *
    * @return unsigned int
    */
@@ -88,9 +88,9 @@ class Context {
   }
 
   /**
-   * @brief Determines if the current processus is the root processus
+   * @brief Determines if the current process is the root process
    *
-   * @return true if it is the root processus, false if not
+   * @return true if it is the root process, false if not
    */
   bool isRootProc() const {
     return rank_ == rootRank_;
@@ -118,7 +118,7 @@ class Context {
    * @tparam T data type
    * @param tag unused
    * @param data data to gather
-   * @param recvData the vector of gathered data (relevant only for root processus)
+   * @param recvData the vector of gathered data (relevant only for root process)
    */
   template<class T>
   void gather_impl(Tag<T> tag, const T& data, std::vector<T>& recvData) const;
@@ -129,7 +129,7 @@ class Context {
    * @tparam T data type
    * @param tag unused
    * @param data vector of data to gather
-   * @param recvData the vector of gathered vectors of data (relevant only for root processus)
+   * @param recvData the vector of gathered vectors of data (relevant only for root process)
    */
   template<class T>
   void gather_impl(Tag<std::vector<T> > tag, const std::vector<T>& data, std::vector<std::vector<T> >& recvData) const;
@@ -155,8 +155,8 @@ class Context {
   void broadcast_impl(Tag<std::vector<T> > tag, std::vector<T>& data) const;
 
  private:
-  int nbProcs_;  ///< number of processus
-  int rank_;     ///< Rank of the current processus
+  int nbProcs_;  ///< number of process
+  int rank_;     ///< Rank of the current process
 };
 
 /**
@@ -164,7 +164,7 @@ class Context {
  *
  * @param tag unused
  * @param data vector of data to gather
- * @param recvData the vector of gathered vectors of data (relevant only for root processus)
+ * @param recvData the vector of gathered vectors of data (relevant only for root process)
  */
 template<>
 void Context::gather_impl(Tag<std::string> tag, const std::string& data, std::vector<std::string>& recvData) const;
@@ -183,7 +183,7 @@ void Context::broadcast_impl(Tag<std::string> tag, std::string& data) const;
  *
  * @param tag unused
  * @param data vector of data to gather
- * @param recvData the vector of gathered vectors of data (relevant only for root processus)
+ * @param recvData the vector of gathered vectors of data (relevant only for root process)
  */
 template<>
 void Context::gather_impl(Tag<bool> tag, const bool& data, std::vector<bool>& recvData) const;
@@ -192,7 +192,7 @@ void Context::gather_impl(Tag<bool> tag, const bool& data, std::vector<bool>& re
  *
  * @param tag unused
  * @param data vector of data to gather
- * @param recvData the vector of gathered vectors of data (relevant only for root processus)
+ * @param recvData the vector of gathered vectors of data (relevant only for root process)
  */
 template<>
 void Context::gather_impl(Tag<std::vector<bool> > tag, const std::vector<bool>& data, std::vector<std::vector<bool> >& recvData) const;
@@ -224,13 +224,13 @@ context() {
 }
 
 /**
- * @brief Perform a operation by distributing into processus
+ * @brief Perform a operation by distributing into process
  *
- * For index range i in [ @a iStart, @a size [, a processus will execute the function @a func if "i mod nbProcs == rank"
+ * For index range i in [ @a iStart, @a size [, a process will execute the function @a func if "i mod nbProcs == rank"
  *
  * @param iStart index range start index
  * @param size index range size of range
- * @param func functor to call for each index of the range according to the processus
+ * @param func functor to call for each index of the range according to the process
  */
 void forEach(unsigned int iStart, unsigned int size, const std::function<void(unsigned int)>& func);
 
