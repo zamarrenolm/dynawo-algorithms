@@ -68,7 +68,7 @@ where [option] can be:
 SCRIPT=$(cd "$(dirname "${BASH_SOURCE[0]}")" && echo "$(pwd)"/"$(basename ${BASH_SOURCE[0]})")
 TOTAL_CPU=$(grep -c ^processor /proc/cpuinfo)
 NBPROCS=1
-MPIRUN_PATH=$(which mpirun)
+MPIRUN_PATH=$(which mpirun 2> /dev/null)
 
 export_var_env_force() {
   local var=$@
@@ -356,8 +356,6 @@ config_dynawo_algorithms_3rdParties() {
   cmake -DCMAKE_C_COMPILER:PATH=$DYNAWO_C_COMPILER \
     -DCMAKE_CXX_COMPILER:PATH=$DYNAWO_CXX_COMPILER \
     -DCMAKE_BUILD_TYPE:STRING=$DYNAWO_BUILD_TYPE \
-    -DDYNAWO_ALGORITHMS_HOME:PATH=$DYNAWO_ALGORITHMS_HOME \
-    -DDYNAWO_HOME:PATH=$DYNAWO_HOME \
     -DCMAKE_INSTALL_PREFIX=$DYNAWO_ALGORITHMS_THIRD_PARTY_INSTALL_DIR \
     $DYNAWO_ALGORITHMS_THIRD_PARTY_SRC_DIR
   RETURN_CODE=$?
