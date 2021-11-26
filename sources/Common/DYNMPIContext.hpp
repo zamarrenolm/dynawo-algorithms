@@ -142,10 +142,15 @@ void
 Context::broadcast_impl(Tag<std::vector<T> >, std::vector<T>& data) const {
   unsigned int size = data.size();
   broadcast(size);
+  if (size == 0) {
+    // nothing to broadcast
+    return;
+  }
+
   if (!isRootProc()) {
     data.resize(size);
   }
-  MPI_Bcast(&data.at(0), size * sizeof(T) / traits::MPIType<T>::ratio, traits::MPIType<T>::type, rootRank_, MPI_COMM_WORLD);
+  MPI_Bcast(data.data(), size * sizeof(T) / traits::MPIType<T>::ratio, traits::MPIType<T>::type, rootRank_, MPI_COMM_WORLD);
 }
 
 }  // namespace mpi

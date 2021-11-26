@@ -41,6 +41,11 @@ class Context {
   /// @brief Destructor
   ~Context();
 
+  Context(const Context&) = delete;
+  Context& operator=(const Context&) = delete;
+  Context(Context&&) = delete;
+  Context& operator=(Context&&) = delete;
+
   /// @brief Synchronize all process
   static void sync() {
     MPI_Barrier(MPI_COMM_WORLD);
