@@ -568,11 +568,11 @@ RobustnessAnalysisLauncher::importResult(const std::string& id) const {
   ss >> status;
   ret.setStatus(static_cast<status_t>(status));
 
-  // criterias
+  // criteria
   file >> tmpStr;
-  assert(tmpStr == "criterias:");
+  assert(tmpStr == "criteria:");
   tmpStr.clear();
-  std::vector<std::pair<double, std::string>> criterias;
+  std::vector<std::pair<double, std::string>> criteria;
   // reading fail can happen at the end of the file if file ends with endline characters
   while (!file.eof() && (file >> tmpStr)) {
     if (tmpStr.find(delimiter) == std::string::npos) {
@@ -584,9 +584,9 @@ RobustnessAnalysisLauncher::importResult(const std::string& id) const {
     ss.str(timeStr);
     ss >> time;
     auto message = tmpStr.substr(tmpStr.find(delimiter)+1);
-    criterias.emplace_back(std::make_pair(time, message));
+    criteria.emplace_back(std::make_pair(time, message));
   }
-  ret.setFailingCriteria(criterias);
+  ret.setFailingCriteria(criteria);
 
   return ret;
 }
@@ -603,7 +603,7 @@ RobustnessAnalysisLauncher::exportResult(const SimulationResult& result) const {
   file << "variation:" <<result.getVariation() << std::endl;
   file << "success:" << std::boolalpha << result.getSuccess() << std::endl;
   file << "status:" << static_cast<unsigned int>(result.getStatus()) << std::endl;
-  file << "criterias:" << std::endl;
+  file << "criteria:" << std::endl;
   for (const auto& criteria : result.getFailingCriteria()) {
     file << criteria.first << ":" << criteria.second << std::endl;
   }

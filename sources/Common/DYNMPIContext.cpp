@@ -33,7 +33,7 @@ Context::Context() {
   }
   ret = MPI_Comm_size(MPI_COMM_WORLD, &nbProcs_);
   if (ret != MPI_SUCCESS) {
-    std::cerr << "Error acquiring number of MPI processus" << std::endl;
+    std::cerr << "Error acquiring number of MPI process" << std::endl;
     std::exit(EXIT_FAILURE);
   }
   ret = MPI_Comm_rank(MPI_COMM_WORLD, &rank_);

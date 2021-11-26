@@ -36,7 +36,7 @@ MultiVariantInputs::readInputs(const std::string& workingDirectory, const std::s
   //  implicit : only one job per file
   jobEntry_ = *jobsCollection->begin();
 
-  // Compute the iidm file path according to the criterias:
+  // Compute the iidm file path according to the criteria:
   // - priority to the file given in parameter
   // - if not given, use the one in the network entry of the job
   std::string iidmFilePath;

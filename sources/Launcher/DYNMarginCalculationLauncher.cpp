@@ -415,7 +415,7 @@ void MarginCalculationLauncher::findOrLaunchScenarios(const std::string& baseJob
     successes.push_back(result.getSuccess());
     exportResult(result);
   });
-  // Sync sucesses
+  // Sync successes
   std::vector<bool> allSuccesses = synchronizeSuccesses(successes);
   for (unsigned int i = 0; i < events2Run.size(); i++) {
     auto& event = events2Run.at(i);
@@ -628,7 +628,7 @@ MarginCalculationLauncher::findOrLaunchLoadIncrease(const boost::shared_ptr<Load
     successes.push_back(result.getSuccess());
     exportResult(result);
   });
-  // Sync sucesses
+  // Sync successes
   std::vector<bool> allSuccesses = synchronizeSuccesses(successes);
   // Fill load increase status
   for (unsigned int i = 0; i < variationsToLaunch.size(); i++) {
