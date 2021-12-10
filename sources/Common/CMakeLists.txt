@@ -62,6 +62,7 @@ set(DYN_ALGO_COMMON_HEADERS
   DYNSimulationResult.h
   DYNLoadIncreaseResult.h
   DYNMPIContext.h
+  DYNMPIContext.hpp
   ${INCLUDE_KEYS}
   )
 
