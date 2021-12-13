@@ -132,13 +132,6 @@ export_var_env_default() {
   export_var_env ${name}_DEFAULT=false
 }
 
-env_var_sanity_check() {
-  value_dynawo=`grep "DYNAWO_CXX11_ENABLED=\"" ${DYNAWO_HOME}/dynawoEnv.txt | sed -e 's/DYNAWO_CXX11_ENABLED="//g' | sed -e 's/"//g'`
-  if [[ "${DYNAWO_CXX11_ENABLED}" != "${value_dynawo}" ]]; then
-  	error_exit "Cannot build dynawo-algorithms with DYNAWO_CXX11_ENABLED=\"${DYNAWO_CXX11_ENABLED}\" as dynawo core was built with DYNAWO_CXX11_ENABLED=\"${value_dynawo}\""
-  fi
-}
-
 export_git_branch() {
   current_dir=$PWD
   pushd $DYNAWO_ALGORITHMS_HOME> /dev/null
@@ -153,7 +146,6 @@ export_git_branch() {
 
 # Export variables needed for dynawo-algorithms
 set_environnement() {
-  env_var_sanity_check
   # Force build type when building tests (or tests coverage)
   case $1 in
     build-tests-coverage)
@@ -188,7 +180,6 @@ set_environnement() {
   export_var_env DYNAWO_BUILD_TESTS=OFF
   export_var_env DYNAWO_BUILD_TESTS_COVERAGE=OFF
   export_var_env DYNAWO_BUILD_TYPE=UNDEFINED
-  export_var_env DYNAWO_CXX11_ENABLED=UNDEFINED
   export_var_env DYNAWO_CMAKE_GENERATOR="Unix Makefiles"
 
   export_var_env DYNAWO_COMPILER_VERSION=$($DYNAWO_C_COMPILER -dumpversion)
@@ -347,7 +338,6 @@ config_dynawo_algorithms() {
     -DBUILD_TESTS=$DYNAWO_BUILD_TESTS \
     -DBUILD_TESTS_COVERAGE=$DYNAWO_BUILD_TESTS_COVERAGE \
     -DCMAKE_INSTALL_PREFIX:PATH=$DYNAWO_ALGORITHMS_INSTALL_DIR \
-    -DCXX11_ENABLED:BOOL=$DYNAWO_CXX11_ENABLED \
     -DXERCESC_HOME=$DYNAWO_XERCESC_HOME \
     -DBOOST_ROOT=$DYNAWO_BOOST_HOME/ \
     -DBOOST_ROOT_DEFAULT:STRING=FALSE \
