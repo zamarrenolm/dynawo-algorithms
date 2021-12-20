@@ -27,7 +27,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Fetch Dynawo (XXX(Luma): from zamarrenolm/dynawo)
+      - name: Fetch Dynawo (XXX(Luma) from zamarrenolm/dynawo)
         env:
           GH_API_DYNAWO: ${{ github.api_url }}/repos/zamarrenolm/dynawo
         run: |
